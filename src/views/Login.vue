@@ -60,18 +60,24 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '../stores/user' // ✅ Tambahan: import store
 import '../css/login.css'
+console.log('Login.vue berhasil dimuat')
 
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 const router = useRouter()
 
+const userStore = useUserStore() // ✅ Tambahan: inisialisasi store
+
 const handleLogin = () => {
   const users = JSON.parse(localStorage.getItem('users')) || []
   const user = users.find(u => u.email === email.value && u.password === password.value)
+
   if (user) {
     localStorage.setItem('currentUser', JSON.stringify(user))
+    userStore.login(user) // ✅ Tambahan: simpan user ke Pinia
     router.push('/')
   } else {
     errorMessage.value = 'Email atau password salah.'

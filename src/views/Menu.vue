@@ -17,32 +17,6 @@
           </router-link>
         </div>
       </div>
-      
-      <!-- Kategori Menu -->
-      <MenuCategory
-        title="Makanan Berat"
-        :items="heavyMeals"
-        icon="🍛"
-        class="category-heavy"
-        @add-to-cart="addToCart"
-      />
-      
-      <MenuCategory
-        title="Snack"
-        :items="snacks"
-        icon="🥟"
-        class="category-snack"
-        @add-to-cart="addToCart"
-      />
-      
-      <MenuCategory
-        title="Minuman"
-        :items="drinks" 
-        icon="🥤"
-        class="category-drink"
-        @add-to-cart="addToCart"
-      />
-      
       <!-- Food List Section -->
       <div class="food-list-section">
         <div class="section-header">
@@ -124,36 +98,7 @@ export default {
       ],
       
       // Data untuk food list spesial
-      foodList: [
-        { 
-          id: 1, 
-          name: 'Nasi Goreng Spesial', 
-          description: 'Nasi goreng dengan telur, ayam, dan sayuran segar yang lezat', 
-          price: 25000,
-          category: 'spesial'
-        },
-        { 
-          id: 2, 
-          name: 'Mie Ayam Premium', 
-          description: 'Mie ayam dengan topping lengkap dan kuah kaldu yang gurih', 
-          price: 20000,
-          category: 'spesial'
-        },
-        { 
-          id: 3, 
-          name: 'Gado-Gado Jakarta', 
-          description: 'Sayuran segar dengan bumbu kacang khas Jakarta yang autentik', 
-          price: 18000,
-          category: 'spesial'
-        },
-        { 
-          id: 4, 
-          name: 'Sate Ayam Madura', 
-          description: 'Sate ayam bakar dengan bumbu kacang Madura yang pedas manis', 
-          price: 30000,
-          category: 'spesial'
-        }
-      ],
+      foodList: [],
       
       // Notification state
       showNotification: false,
@@ -168,22 +113,17 @@ export default {
   },
   methods: {
     addToCart(item) {
-      // Pastikan item memiliki ID yang unik
       if (!item.id) {
         item.id = `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       }
       
       let cart = this.getCart();
-      
-      // Check if item already exists in cart
       const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
       
       if (existingItemIndex !== -1) {
-        // Item sudah ada, tambah quantity
         cart[existingItemIndex].quantity = (cart[existingItemIndex].quantity || 1) + 1;
         this.showCartNotification(`${item.name} (${cart[existingItemIndex].quantity}x) sudah di keranjang!`);
       } else {
-        // Item baru, tambah ke cart
         const cartItem = {
           id: item.id,
           name: item.name,
@@ -198,23 +138,18 @@ export default {
       }
       
       this.saveCart(cart);
-      
-      // Emit event untuk update global state jika ada
       this.$emit('cart-updated', cart);
     },
     
     getCart() {
-      // Menggunakan window.cartData sebagai pengganti localStorage
       if (!window.cartData) {
         window.cartData = [];
       }
-      return [...window.cartData]; // Return copy untuk menghindari mutasi langsung
+      return [...window.cartData];
     },
     
     saveCart(cart) {
       window.cartData = cart;
-      
-      // Juga simpan ke localStorage jika tersedia (untuk penggunaan di luar artifact)
       if (typeof Storage !== 'undefined') {
         try {
           localStorage.setItem('foodCart', JSON.stringify(cart));
@@ -233,7 +168,6 @@ export default {
       }, 4000);
     },
     
-    // Method untuk load cart dari localStorage jika tersedia
     loadCartFromStorage() {
       if (typeof Storage !== 'undefined') {
         try {
@@ -245,12 +179,23 @@ export default {
           console.log('Error loading cart from localStorage:', error);
         }
       }
+    },
+
+    // ✅ Tambahan: Ambil data dari API dan gabungkan ke foodList
+    async fetchFoodFromAPI() {
+      try {
+        const res = await fetch('http://localhost:3000/foods')
+        const data = await res.json()
+        this.foodList = [...this.foodList, ...data]
+      } catch (error) {
+        console.error('Gagal mengambil data dari API:', error)
+      }
     }
   },
   
   mounted() {
-    // Load cart data saat component dimount
-    this.loadCartFromStorage();
+    this.loadCartFromStorage()
+    this.fetchFoodFromAPI() // ✅ Tambahan: ambil data dari json-server
   }
 }
 </script>
