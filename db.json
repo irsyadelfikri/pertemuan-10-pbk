@@ -1,68 +1,110 @@
 {
   "foods": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Nasi Goreng Spesial",
       "description": "Nasi goreng dengan telur, ayam, dan sayuran segar yang lezat",
       "price": 25000,
       "category": "spesial"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Mie Ayam Premium",
       "description": "Mie ayam dengan topping lengkap dan kuah kaldu yang gurih",
       "price": 20000,
       "category": "spesial"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Gado-Gado Jakarta",
       "description": "Sayuran segar dengan bumbu kacang khas Jakarta yang autentik",
       "price": 18000,
       "category": "spesial"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Sate Ayam Madura",
       "description": "Sate ayam bakar dengan bumbu kacang Madura yang pedas manis",
       "price": 30000,
       "category": "spesial"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Ketoprak",
       "description": "Tahu, bihun, dan lontong dengan siraman saus kacang dan kerupuk",
       "price": 15000,
       "category": "spesial"
     },
     {
-      "id": 6,
+      "id": "6",
       "name": "Sate Ayam Padang",
       "description": "Sate ayam khas Padang dengan bumbu kuah kental yang kaya rempah",
       "price": 28000,
       "category": "spesial"
     },
     {
-      "id": 7,
+      "id": "7",
       "name": "Kwetiau",
       "description": "Kwetiau goreng dengan daging sapi, telur, dan sayuran",
       "price": 22000,
       "category": "spesial"
     },
     {
-      "id": 8,
+      "id": "8",
       "name": "Mie Goreng",
       "description": "Mie goreng spesial dengan topping bakso dan ayam",
       "price": 18000,
       "category": "spesial"
     },
     {
-      "id": 9,
+      "id": "9",
       "name": "Ayam Celup",
       "description": "Ayam Celup dengan kuah gulai yang pedas dan nikmat",
       "price": 10000,
       "category": "spesial"
+    },
+    {
+      "id": "201",
+      "name": "Siomay",
+      "price": 10000,
+      "category": "snack",
+      "description": "Siomay ikan dengan saus kacang dan kecap manis"
+    },
+    {
+      "id": "202",
+      "name": "Risoles",
+      "price": 5000,
+      "category": "snack",
+      "description": "Risoles isi sayuran dan daging cincang"
+    },
+    {
+      "id": "203",
+      "name": "Pisang Goreng",
+      "price": 7000,
+      "category": "snack",
+      "description": "Pisang goreng crispy dengan taburan gula halus"
+    },
+    {
+      "id": "301",
+      "name": "Teh Manis",
+      "price": 5000,
+      "category": "drink",
+      "description": "Teh manis hangat dengan gula aren"
+    },
+    {
+      "id": "302",
+      "name": "Es Jeruk",
+      "price": 6000,
+      "category": "drink",
+      "description": "Es jeruk segar dengan potongan jeruk asli"
+    },
+    {
+      "id": "303",
+      "name": "Jus Alpukat",
+      "price": 10000,
+      "category": "drink",
+      "description": "Jus alpukat segar dengan susu kental manis"
     }
-  ]
+  ],
+  "keranjang": []
 }
-

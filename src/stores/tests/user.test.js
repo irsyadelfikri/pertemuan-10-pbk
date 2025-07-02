@@ -15,7 +15,7 @@ describe('User Store', () => {
 
   it('login() menyimpan data user ke currentUser', () => {
     const userStore = useUserStore()
-    const dummyUser = { name: 'Irsyad', email: 'irsyad@mail.com' }
+    const dummyUser = { name: 'Irsyad', email: 'irsyadelf@mail.com' }
 
     userStore.login(dummyUser)
 

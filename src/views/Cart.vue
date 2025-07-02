@@ -17,7 +17,9 @@
       <div v-if="cartItems.length === 0" class="empty-cart">
         <div class="empty-cart-icon">🛒</div>
         <h2 class="empty-cart-title">Keranjang Kosong</h2>
-        <p class="empty-cart-text">Belum ada makanan yang ditambahkan ke keranjang</p>
+        <p class="empty-cart-text">
+          Belum ada makanan yang ditambahkan ke keranjang
+        </p>
         <router-link to="/menu" class="shop-now-btn">
           <span class="btn-icon">🍽️</span>
           Mulai Belanja
@@ -34,7 +36,9 @@
           </div>
           <div class="summary-item">
             <span class="summary-label">Total Harga:</span>
-            <span class="summary-value total-price">Rp {{ formatPrice(totalPrice) }}</span>
+            <span class="summary-value total-price"
+              >Rp {{ formatPrice(totalPrice) }}</span
+            >
           </div>
         </div>
 
@@ -47,34 +51,45 @@
               </div>
               <div class="item-details">
                 <h3 class="item-name">{{ item.name }}</h3>
-                <p class="item-description">{{ item.description || 'Tidak ada deskripsi' }}</p>
+                <p class="item-description">
+                  {{ item.description || "Tidak ada deskripsi" }}
+                </p>
                 <div class="item-meta">
-                  <span class="item-price">Rp {{ formatPrice(item.price) }}</span>
-                  <span class="item-category-text">{{ getCategoryName(item.category) }}</span>
+                  <span class="item-price"
+                    >Rp {{ formatPrice(item.price) }}</span
+                  >
+                  <span class="item-category-text">{{
+                    getCategoryName(item.category)
+                  }}</span>
                 </div>
               </div>
             </div>
-            
+
             <div class="item-actions">
               <div class="quantity-controls">
-                <button 
-                  @click="decreaseQuantity(item)" 
-                  class="quantity-btn minus" 
+                <button
+                  @click="decreaseQuantity(item)"
+                  class="quantity-btn minus"
                   :disabled="item.quantity <= 1"
                 >
                   <span>-</span>
                 </button>
                 <span class="quantity-display">{{ item.quantity }}</span>
-                <button @click="increaseQuantity(item)" class="quantity-btn plus">
+                <button
+                  @click="increaseQuantity(item)"
+                  class="quantity-btn plus"
+                >
                   <span>+</span>
                 </button>
               </div>
-              
+
               <div class="item-total">
                 <span class="total-label">Subtotal:</span>
-                <span class="total-value">Rp {{ formatPrice(item.price * item.quantity) }}</span>
+                <span class="total-value"
+                  >Rp {{ formatPrice(item.price * item.quantity) }}</span
+                >
               </div>
-              
+
               <button @click="removeFromCart(item)" class="remove-btn">
                 <span class="remove-icon">🗑️</span>
                 Hapus
@@ -99,14 +114,22 @@
               <span>Rp {{ formatPrice(grandTotal) }}</span>
             </div>
           </div>
-          
+
           <div class="checkout-actions">
-            <button @click="clearCart" class="clear-cart-btn" :disabled="cartItems.length === 0">
+            <button
+              @click="clearCart"
+              class="clear-cart-btn"
+              :disabled="cartItems.length === 0"
+            >
               <span class="btn-icon">🗑️</span>
               Kosongkan Keranjang
             </button>
-            
-            <button @click="proceedToCheckout" class="checkout-btn" :disabled="cartItems.length === 0">
+
+            <button
+              @click="proceedToCheckout"
+              class="checkout-btn"
+              :disabled="cartItems.length === 0"
+            >
               <span class="btn-icon">💳</span>
               Lanjut ke Pembayaran
             </button>
@@ -128,322 +151,367 @@
 </template>
 
 <script>
-import '../css/cart.css'
+import "../css/cart.css";
 
 export default {
-  name: 'Cart',
+  name: "Cart",
   data() {
     return {
       cartItems: [],
       shippingCost: 5000,
       showNotification: false,
-      notificationMessage: '',
-      notificationIcon: '✅',
-      cartUpdateInterval: null
-    }
+      notificationMessage: "",
+      notificationIcon: "✅",
+      cartUpdateInterval: null,
+    };
   },
-  
+
   computed: {
     totalItems() {
       return this.cartItems.reduce((total, item) => total + item.quantity, 0);
     },
-    
+
     totalPrice() {
-      return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+      return this.cartItems.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
     },
-    
+
     grandTotal() {
       return this.totalPrice + this.shippingCost;
-    }
+    },
   },
-  
+
   methods: {
-    loadCart() {
+    async loadCart() {
       try {
-        // Prioritas: localStorage > window.cartData
-        let loadedCart = [];
-        
-        // Coba load dari localStorage dulu
-        if (typeof Storage !== 'undefined' && localStorage.getItem('foodCart')) {
-          const savedCart = localStorage.getItem('foodCart');
-          const parsedCart = JSON.parse(savedCart);
-          if (Array.isArray(parsedCart)) {
-            loadedCart = parsedCart;
-          }
+        const response = await fetch("http://localhost:3000/keranjang"); // Ganti port kalau perlu
+        const data = await response.json();
+
+        if (Array.isArray(data)) {
+          this.cartItems = data.filter(
+            (item) =>
+              item &&
+              item.id &&
+              item.name &&
+              typeof item.price === "number" &&
+              typeof item.quantity === "number" &&
+              item.quantity > 0
+          );
+        } else {
+          this.cartItems = [];
         }
-        // Fallback ke window.cartData
-        else if (window.cartData && Array.isArray(window.cartData)) {
-          loadedCart = [...window.cartData];
-        }
-        
-        // Validasi dan bersihkan data cart
-        this.cartItems = loadedCart.filter(item => 
-          item && 
-          item.id && 
-          item.name && 
-          typeof item.price === 'number' && 
-          typeof item.quantity === 'number' && 
-          item.quantity > 0
+      } catch (error) {
+        console.error("Gagal mengambil data keranjang dari server:", error);
+        this.showNotificationMessage(
+          "Gagal memuat keranjang dari server",
+          "⚠️"
         );
-        
-        // Sync dengan window.cartData
-        if (typeof window !== 'undefined') {
-          window.cartData = [...this.cartItems];
-        }
-        
-      } catch (error) {
-        console.error('Error loading cart:', error);
         this.cartItems = [];
-        this.showNotificationMessage('Error memuat keranjang', '⚠️');
       }
     },
-    
-    saveCart() {
+
+    async saveCart() {
       try {
-        // Simpan ke window.cartData
-        if (typeof window !== 'undefined') {
-          window.cartData = [...this.cartItems];
+        // Ambil semua item dari server
+        const getResponse = await fetch("http://localhost:3000/keranjang");
+        const existingItems = await getResponse.json();
+
+        // Hapus semua item satu per satu
+        for (const item of existingItems) {
+          await fetch(`http://localhost:3000/keranjang/${item.id}`, {
+            method: "DELETE",
+          });
         }
-        
-        // Simpan ke localStorage jika tersedia
-        if (typeof Storage !== 'undefined') {
-          localStorage.setItem('foodCart', JSON.stringify(this.cartItems));
+
+        // Tambahkan ulang item dari cartItems
+        for (const item of this.cartItems) {
+          await fetch("http://localhost:3000/keranjang", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(item),
+          });
         }
-        
-        // Trigger event untuk komponen lain
-        if (typeof window !== 'undefined' && window.dispatchEvent) {
-          window.dispatchEvent(new CustomEvent('cartUpdated', { 
-            detail: { cartItems: this.cartItems, totalItems: this.totalItems }
-          }));
-        }
-        
+
+        this.showNotificationMessage("Keranjang tersimpan ke server", "✅");
       } catch (error) {
-        console.error('Error saving cart:', error);
-        this.showNotificationMessage('Error menyimpan keranjang', '⚠️');
+        console.error("Gagal menyimpan keranjang ke server:", error);
+        this.showNotificationMessage(
+          "Gagal menyimpan keranjang ke server",
+          "⚠️"
+        );
       }
     },
-    
-    increaseQuantity(item) {
-      const itemIndex = this.cartItems.findIndex(cartItem => cartItem.id === item.id);
-      if (itemIndex !== -1) {
-        this.cartItems[itemIndex].quantity += 1;
-        this.saveCart();
-        this.showNotificationMessage(`${item.name} ditambahkan (${this.cartItems[itemIndex].quantity}x)`, '✅');
+
+    async increaseQuantity(item) {
+      const updatedItem = { ...item, quantity: item.quantity + 1 };
+      try {
+        await fetch(`http://localhost:3000/keranjang/${item.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ quantity: updatedItem.quantity }),
+        });
+
+        item.quantity++;
+        this.showNotificationMessage(
+          `${item.name} ditambahkan (${item.quantity}x)`,
+          "✅"
+        );
+      } catch (error) {
+        console.error("Gagal menambahkan jumlah:", error);
+        this.showNotificationMessage("Gagal menambahkan jumlah item", "⚠️");
       }
     },
-    
-    decreaseQuantity(item) {
-      const itemIndex = this.cartItems.findIndex(cartItem => cartItem.id === item.id);
-      if (itemIndex !== -1 && this.cartItems[itemIndex].quantity > 1) {
-        this.cartItems[itemIndex].quantity -= 1;
-        this.saveCart();
-        this.showNotificationMessage(`${item.name} dikurangi (${this.cartItems[itemIndex].quantity}x)`, '✅');
+
+    async decreaseQuantity(item) {
+      if (item.quantity <= 1) return;
+
+      const updatedQuantity = item.quantity - 1;
+      try {
+        await fetch(`https://foodieorder.glitch.me/keranjang/${item.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ quantity: updatedQuantity }),
+        });
+
+        item.quantity--;
+        this.showNotificationMessage(
+          `${item.name} dikurangi (${item.quantity}x)`,
+          "✅"
+        );
+      } catch (error) {
+        console.error("Gagal mengurangi jumlah:", error);
+        this.showNotificationMessage("Gagal mengurangi jumlah item", "⚠️");
       }
     },
-    
-    removeFromCart(item) {
-      const itemIndex = this.cartItems.findIndex(cartItem => cartItem.id === item.id);
-      if (itemIndex !== -1) {
-        const itemName = this.cartItems[itemIndex].name;
-        this.cartItems.splice(itemIndex, 1);
-        this.saveCart();
-        this.showNotificationMessage(`${itemName} dihapus dari keranjang`, '🗑️');
+
+    async removeFromCart(item) {
+      try {
+        await fetch(`http://localhost:3000/keranjang/${item.id}`, {
+          method: "DELETE",
+        });
+        this.cartItems = this.cartItems.filter((i) => i.id !== item.id);
+        this.showNotificationMessage(
+          `${item.name} dihapus dari keranjang`,
+          "🗑️"
+        );
+      } catch (error) {
+        console.error("Gagal menghapus item:", error);
+        this.showNotificationMessage("Gagal menghapus item", "⚠️");
       }
     },
-    
+
     clearCart() {
       if (this.cartItems.length > 0) {
-        if (confirm('Apakah Anda yakin ingin mengosongkan keranjang?')) {
+        if (confirm("Apakah Anda yakin ingin mengosongkan keranjang?")) {
           this.cartItems = [];
           this.saveCart();
-          this.showNotificationMessage('Keranjang telah dikosongkan', '🗑️');
+          this.showNotificationMessage("Keranjang telah dikosongkan", "🗑️");
         }
       }
     },
-    
+
     proceedToCheckout() {
       if (this.cartItems.length === 0) {
-        this.showNotificationMessage('Keranjang kosong! Tambahkan makanan terlebih dahulu', '⚠️');
+        this.showNotificationMessage(
+          "Keranjang kosong! Tambahkan makanan terlebih dahulu",
+          "⚠️"
+        );
         return;
       }
-      
+
       // Simulasi proses checkout
-      this.showNotificationMessage('Mengarahkan ke halaman pembayaran...', '💳');
-      
+      this.showNotificationMessage(
+        "Mengarahkan ke halaman pembayaran...",
+        "💳"
+      );
+
       // Dalam aplikasi nyata, ini akan redirect ke halaman checkout
       setTimeout(() => {
         const confirmed = confirm(
           `Konfirmasi Checkout:\n\n` +
-          `Total Item: ${this.totalItems}\n` +
-          `Total Harga: Rp ${this.formatPrice(this.grandTotal)}\n\n` +
-          `Lanjutkan ke pembayaran?`
+            `Total Item: ${this.totalItems}\n` +
+            `Total Harga: Rp ${this.formatPrice(this.grandTotal)}\n\n` +
+            `Lanjutkan ke pembayaran?`
         );
-        
+
         if (confirmed) {
           this.processPayment();
         }
       }, 1500);
     },
-    
+
     processPayment() {
       // Simulasi proses pembayaran
-      this.showNotificationMessage('Memproses pembayaran...', '⏳');
-      
+      this.showNotificationMessage("Memproses pembayaran...", "⏳");
+
       setTimeout(() => {
         // Simpan order ke history
         this.saveOrderToHistory();
-        
+
         // Berhasil checkout
-        this.showNotificationMessage('Pembayaran berhasil! Terima kasih telah berbelanja! 🎉', '✅');
-        
+        this.showNotificationMessage(
+          "Pembayaran berhasil! Terima kasih telah berbelanja! 🎉",
+          "✅"
+        );
+
         // Kosongkan cart setelah berhasil checkout
         setTimeout(() => {
           this.cartItems = [];
           this.saveCart();
         }, 2000);
-        
       }, 2000);
     },
-    
+
     saveOrderToHistory() {
       try {
         // Buat order object
         const order = {
-          id: 'ORDER-' + Date.now(),
+          id: "ORDER-" + Date.now(),
           date: new Date().toISOString(),
           items: [...this.cartItems],
           subtotal: this.totalPrice,
           shippingCost: this.shippingCost,
           total: this.grandTotal,
           totalItems: this.totalItems,
-          status: 'completed',
-          paymentMethod: 'Tunai', // Bisa disesuaikan
+          status: "completed",
+          paymentMethod: "Tunai", // Bisa disesuaikan
           customerInfo: {
-            name: 'Customer', // Bisa disesuaikan
-            address: 'Alamat pengiriman' // Bisa disesuaikan
-          }
+            name: "Customer", // Bisa disesuaikan
+            address: "Alamat pengiriman", // Bisa disesuaikan
+          },
         };
-        
+
         // Load existing orders
         let orders = [];
-        if (typeof Storage !== 'undefined') {
-          const savedOrders = localStorage.getItem('orderHistory');
+        if (typeof Storage !== "undefined") {
+          const savedOrders = localStorage.getItem("orderHistory");
           if (savedOrders) {
             orders = JSON.parse(savedOrders);
           }
         }
-        
+
         // Jika localStorage tidak tersedia, gunakan window.orderHistory
         if (!Array.isArray(orders) && window.orderHistory) {
           orders = [...window.orderHistory];
         }
-        
+
         // Tambahkan order baru ke array
         orders.unshift(order); // unshift untuk menaruh order terbaru di atas
-        
+
         // Batasi maksimal 50 order untuk performa
         if (orders.length > 50) {
           orders = orders.slice(0, 50);
         }
-        
+
         // Simpan ke localStorage
-        if (typeof Storage !== 'undefined') {
-          localStorage.setItem('orderHistory', JSON.stringify(orders));
+        if (typeof Storage !== "undefined") {
+          localStorage.setItem("orderHistory", JSON.stringify(orders));
         }
-        
+
         // Simpan ke window.orderHistory sebagai backup
         window.orderHistory = [...orders];
-        
+
         // Trigger event untuk komponen lain
-        if (typeof window !== 'undefined' && window.dispatchEvent) {
-          window.dispatchEvent(new CustomEvent('orderCreated', { 
-            detail: { order: order, orders: orders }
-          }));
+        if (typeof window !== "undefined" && window.dispatchEvent) {
+          window.dispatchEvent(
+            new CustomEvent("orderCreated", {
+              detail: { order: order, orders: orders },
+            })
+          );
         }
-        
-        console.log('Order saved successfully:', order);
-        
+
+        console.log("Order saved successfully:", order);
       } catch (error) {
-        console.error('Error saving order to history:', error);
-        this.showNotificationMessage('Error menyimpan riwayat pesanan', '⚠️');
+        console.error("Error saving order to history:", error);
+        this.showNotificationMessage("Error menyimpan riwayat pesanan", "⚠️");
       }
     },
-    
+
     getCategoryIcon(category) {
       const icons = {
-        'heavy': '🍛',
-        'snack': '🥟',
-        'drink': '🥤',
-        'special': '⭐',
-        'other': '🍽️'
+        heavy: "🍛",
+        snack: "🥟",
+        drink: "🥤",
+        special: "⭐",
+        other: "🍽️",
       };
-      return icons[category] || icons['other'];
+      return icons[category] || icons["other"];
     },
-    
+
     getCategoryName(category) {
       const names = {
-        'heavy': 'Makanan Berat',
-        'snack': 'Snack',
-        'drink': 'Minuman',
-        'special': 'Menu Spesial',
-        'other': 'Lainnya'
+        heavy: "Makanan Berat",
+        snack: "Snack",
+        drink: "Minuman",
+        special: "Menu Spesial",
+        other: "Lainnya",
       };
-      return names[category] || names['other'];
+      return names[category] || names["other"];
     },
-    
+
     formatPrice(price) {
-      if (typeof price !== 'number' || isNaN(price)) {
-        return '0';
+      if (typeof price !== "number" || isNaN(price)) {
+        return "0";
       }
-      return price.toLocaleString('id-ID');
+      return price.toLocaleString("id-ID");
     },
-    
-    showNotificationMessage(message, icon = '✅') {
+
+    showNotificationMessage(message, icon = "✅") {
       this.notificationMessage = message;
       this.notificationIcon = icon;
       this.showNotification = true;
-      
+
       setTimeout(() => {
         this.showNotification = false;
       }, 3000);
     },
-    
+
     handleCartUpdate() {
       // Method untuk handle update cart dari external sources
       const currentCartString = JSON.stringify(this.cartItems);
-      const windowCartString = window.cartData ? JSON.stringify(window.cartData) : '[]';
-      
+      const windowCartString = window.cartData
+        ? JSON.stringify(window.cartData)
+        : "[]";
+
       if (currentCartString !== windowCartString) {
         this.loadCart();
       }
-    }
+    },
   },
-  
+
   created() {
     // Load cart data saat component dibuat
     this.loadCart();
   },
-  
+
   mounted() {
     // Setup interval untuk check cart updates
     this.cartUpdateInterval = setInterval(this.handleCartUpdate, 2000);
-    
+
     // Listen untuk custom event cart updates
-    if (typeof window !== 'undefined') {
-      window.addEventListener('cartUpdated', this.handleCartUpdate);
+    if (typeof window !== "undefined") {
+      window.addEventListener("cartUpdated", this.handleCartUpdate);
     }
   },
-  
+
   beforeUnmount() {
     // Cleanup interval dan event listeners
     if (this.cartUpdateInterval) {
       clearInterval(this.cartUpdateInterval);
       this.cartUpdateInterval = null;
     }
-    
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('cartUpdated', this.handleCartUpdate);
+
+    if (typeof window !== "undefined") {
+      window.removeEventListener("cartUpdated", this.handleCartUpdate);
     }
-  }
-}
+  },
+};
 </script>

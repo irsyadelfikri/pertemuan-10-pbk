@@ -54,25 +54,15 @@
       </div>
     </div>
     
-    <div class="stats-section">
-      <div class="stat-item">
-        <div class="stat-number">1000+</div>
-        <div class="stat-label">Menu Tersedia</div>
+    <footer class="footer">
+      <div class="social-links">
+        <a href="https://www.instagram.com/irsyadellfkrii" target="_blank">Instagram</a> |
+        <a href="https://www.facebook.com/irsyadelfkrii?mibextid=JRoKGi" target="_blank">Facebook</a> |
+        <a href="https://youtu.be/poP7Q1ODpBA" target="_blank">YouTube</a>
       </div>
-      <div class="stat-item">
-        <div class="stat-number">5000+</div>
-        <div class="stat-label">Pengguna Aktif</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">99%</div>
-        <div class="stat-label">Kepuasan</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">24/7</div>
-        <div class="stat-label">Layanan</div>
-      </div>
-    </div>
-  </div>
+      <p class="footer-note">© 2025 FoodieOrder. All rights reserved.</p>
+    </footer>
+</div>
 </template>
 
 <script>
