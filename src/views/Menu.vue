@@ -197,7 +197,7 @@ export default {
 
     async getCart() {
       try {
-        const response = await fetch("http://localhost:3000/keranjang");
+        const response = await fetch("https://foodieorder.glitch.me/keranjang");
         const data = await response.json();
         return Array.isArray(data) ? data : [];
       } catch (error) {
@@ -208,15 +208,15 @@ export default {
 
     async saveCart(cart) {
       try {
-        const response = await fetch("http://localhost:3000/keranjang");
+        const response = await fetch("https://foodieorder.glitch.me/keranjang");
         const existing = await response.json();
 
         for (const item of existing) {
-          await fetch(`http://localhost:3000/keranjang/${item.id}`, { method: "DELETE" });
+          await fetch(`https://foodieorder.glitch.me/keranjang/${item.id}`, { method: "DELETE" });
         }
 
         for (const item of cart) {
-          await fetch("http://localhost:3000/keranjang", {
+          await fetch("https://foodieorder.glitch.me/keranjang", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(item),
