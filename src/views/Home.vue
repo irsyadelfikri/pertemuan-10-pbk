@@ -58,7 +58,7 @@
       <div class="social-links">
         <a href="https://www.instagram.com/irsyadellfkrii" target="_blank">Instagram</a> |
         <a href="https://www.facebook.com/irsyadelfkrii?mibextid=JRoKGi" target="_blank">Facebook</a> |
-        <a href="https://youtu.be/poP7Q1ODpBA" target="_blank">YouTube</a>
+        <a href="https://youtu.be/Tcx8VPuRugc" target="_blank">YouTube</a>
       </div>
       <p class="footer-note">© 2025 FoodieOrder. All rights reserved.</p>
     </footer>
