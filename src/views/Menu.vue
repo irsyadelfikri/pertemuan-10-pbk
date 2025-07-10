@@ -197,7 +197,7 @@ export default {
 
     async getCart() {
       try {
-        const response = await fetch("https://foodieorder.glitch.me/keranjang");
+        const response = await fetch("https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang");
         const data = await response.json();
         return Array.isArray(data) ? data : [];
       } catch (error) {
@@ -208,15 +208,15 @@ export default {
 
     async saveCart(cart) {
       try {
-        const response = await fetch("https://foodieorder.glitch.me/keranjang");
+        const response = await fetch("https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang");
         const existing = await response.json();
 
         for (const item of existing) {
-          await fetch(`https://foodieorder.glitch.me/keranjang/${item.id}`, { method: "DELETE" });
+          await fetch(`https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang/${item.id}`, { method: "DELETE" });
         }
 
         for (const item of cart) {
-          await fetch("https://foodieorder.glitch.me/keranjang", {
+          await fetch("https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(item),
@@ -237,7 +237,7 @@ export default {
 
     async fetchFoodFromAPI() {
       try {
-        const res = await fetch("https://foodieorder.glitch.me/foods");
+        const res = await fetch("https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/foods");
         const data = await res.json();
         this.foodList = data.filter(item => item.category === "spesial");
         this.snacks = data.filter(item => item.category === "snack");

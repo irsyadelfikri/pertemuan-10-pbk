@@ -186,7 +186,7 @@ export default {
   methods: {
     async loadCart() {
       try {
-        const response = await fetch("https://foodieorder.glitch.me/keranjang"); // Ganti port kalau perlu
+        const response = await fetch("https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang"); // Ganti port kalau perlu
         const data = await response.json();
 
         if (Array.isArray(data)) {
@@ -215,19 +215,19 @@ export default {
     async saveCart() {
       try {
         // Ambil semua item dari server
-        const getResponse = await fetch("https://foodieorder.glitch.me/keranjang");
+        const getResponse = await fetch("https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang");
         const existingItems = await getResponse.json();
 
         // Hapus semua item satu per satu
         for (const item of existingItems) {
-          await fetch(`https://foodieorder.glitch.me/keranjang/${item.id}`, {
+          await fetch(`https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang/${item.id}`, {
             method: "DELETE",
           });
         }
 
         // Tambahkan ulang item dari cartItems
         for (const item of this.cartItems) {
-          await fetch("https://foodieorder.glitch.me/keranjang", {
+          await fetch("https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -249,7 +249,7 @@ export default {
     async increaseQuantity(item) {
       const updatedItem = { ...item, quantity: item.quantity + 1 };
       try {
-        await fetch(`https://foodieorder.glitch.me/keranjang/${item.id}`, {
+        await fetch(`https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang/${item.id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -273,7 +273,7 @@ export default {
 
       const updatedQuantity = item.quantity - 1;
       try {
-        await fetch(`https://foodieorder.glitch.me/keranjang/${item.id}`, {
+        await fetch(`https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang/${item.id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -294,7 +294,7 @@ export default {
 
     async removeFromCart(item) {
       try {
-        await fetch(`https://foodieorder.glitch.me/keranjang/${item.id}`, {
+        await fetch(`https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang/${item.id}`, {
           method: "DELETE",
         });
         this.cartItems = this.cartItems.filter((i) => i.id !== item.id);

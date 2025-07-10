@@ -510,7 +510,7 @@ export default {
         // Ambil data keranjang dari server (jika ingin merge)
         let cartItems = [];
         try {
-          const res = await fetch("https://foodieorder.glitch.me/keranjang");
+          const res = await fetch("https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang");
           if (res.ok) {
             cartItems = await res.json();
           }
@@ -538,8 +538,8 @@ export default {
             // Jika item sudah ada di cart (update), kalau tidak (tambah)
             const method = existing ? "PUT" : "POST";
             const url = existing
-              ? `https://foodieorder.glitch.me/keranjang/${existing.id}`
-              : `https://foodieorder.glitch.me/keranjang`;
+              ? `https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang/${existing.id}`
+              : `https://b8294080-0936-47de-a70d-6063a88ce925-00-3ewloh0iljq8w.sisko.replit.dev/keranjang`;
 
             await fetch(url, {
               method,
